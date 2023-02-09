@@ -5,6 +5,7 @@ use std::str::FromStr;
 pub enum Token {
     VersionSpecifier(Version),
     NameSpace(String),
+    Comment,
 }
 
 pub fn tokenize(contents: &str) -> Vec<Token> {
@@ -12,6 +13,9 @@ pub fn tokenize(contents: &str) -> Vec<Token> {
     let mut tokens = Vec::new();
 
     for tok in contents.lines() {
+        // remove whitespace
+        let tok = tok.trim();
+
         if tok.is_empty() {
             continue;
         }
@@ -31,11 +35,25 @@ impl TryFrom<&str> for Token {
     type Error = ParseTokenError;
 
     fn try_from(value: &str) -> Result<Token, ParseTokenError> {
-        // if the first character is a '[' and the second is 'v' then it is a version specifier
-        if value.chars().nth(0).unwrap() == '[' && value.chars().nth(1).unwrap() == 'v' {
+        // if the first characters are '// ' then we are looking at a comment
+        if value.starts_with("// ") {
+            return Ok(Token::Comment);
+        }
+
+        // if the first characters are '[version ' then we are looking at a version specifier
+        if value.starts_with("[version ") {
             let version = Version::from_str(remove_version_specifier_whitespace(value))
                 .expect("parse semver version");
             return Ok(Token::VersionSpecifier(version));
+        }
+        // else if the first character is '[' then we are looking at a namespace
+        else if value.starts_with("[") {
+            // TODO: the namespace token shouldn't hold a string but an array of strings that represent any nested namespaces
+            // TODO: i.e.: [hello::world] should become Token::NameSpace(vec!["hello", "world"])
+
+            // skip the first character because it is '[' and the last character because it is ']'
+            let identifier = String::from(&value[1..value.len() - 1]);
+            return Ok(Token::NameSpace(identifier));
         }
 
         Err(ParseTokenError)
@@ -44,6 +62,7 @@ impl TryFrom<&str> for Token {
 
 const VERSION_WORD_LENGTH: usize = "version".len();
 
+// TODO: this function will not work if the inputted string is has a syntax error
 fn remove_version_specifier_whitespace(value: &str) -> &str {
     for pair in value.char_indices() {
         let (index, _character) = pair;

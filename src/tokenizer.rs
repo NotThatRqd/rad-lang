@@ -49,7 +49,7 @@ impl TryFrom<&str> for Token {
         // else if the first character is '[' then we are looking at a namespace
         else if value.starts_with("[") {
             // TODO: the namespace token shouldn't hold a string but an array of strings that represent any nested namespaces
-            // TODO: i.e.: [hello::world] should become Token::NameSpace(vec!["hello", "world"])
+            // TODO: i.e.: [hello:world] should become Token:NameSpace(vec!["hello", "world"])
 
             // skip the first character because it is '[' and the last character because it is ']'
             let identifier = String::from(&value[1..value.len() - 1]);

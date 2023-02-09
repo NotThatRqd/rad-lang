@@ -7,6 +7,6 @@
 // you can make other namespaces by using the namespace syntax
 // you can make sub namespaces using the sub namespace syntax
 
-    [main::upgrades]
+    [main:upgrades]
     // this is a sub namespace
     // you can indent, but it is not required

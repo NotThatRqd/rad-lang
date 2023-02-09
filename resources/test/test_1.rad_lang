@@ -1,0 +1,12 @@
+[version 0.1.0]
+// this is a comment
+// this is where any extra information about the version of rad_lang can be stored
+
+[main]
+// this is the main namespace
+// you can make other namespaces by using the namespace syntax
+// you can make sub namespaces using the sub namespace syntax
+
+    [main::upgrades]
+    // this is a sub namespace
+    // you can indent, but it is not required

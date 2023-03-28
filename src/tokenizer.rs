@@ -5,6 +5,7 @@ use std::str::FromStr;
 pub enum Token {
     VersionSpecifier(Version),
     NameSpace(String),
+    Identifier(String),
     Comment,
 }
 
@@ -41,10 +42,10 @@ impl TryFrom<&str> for Token {
         }
 
         // if the first characters are '[version ' then we are looking at a version specifier
-        if value.starts_with("[version ") {
+        return if value.starts_with("[version ") {
             let version = Version::from_str(remove_version_specifier_whitespace(value))
                 .expect("parse semver version");
-            return Ok(Token::VersionSpecifier(version));
+            Ok(Token::VersionSpecifier(version))
         }
         // else if the first character is '[' then we are looking at a namespace
         else if value.starts_with("[") {
@@ -53,10 +54,13 @@ impl TryFrom<&str> for Token {
 
             // skip the first character because it is '[' and the last character because it is ']'
             let identifier = String::from(&value[1..value.len() - 1]);
-            return Ok(Token::NameSpace(identifier));
+            Ok(Token::NameSpace(identifier))
         }
-
-        Err(ParseTokenError)
+        // else if none of the above then we are looking at an identifier
+        else {
+            let identifier = String::from(value);
+            Ok(Token::Identifier(identifier))
+        }
     }
 }
 

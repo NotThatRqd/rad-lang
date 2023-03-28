@@ -4,8 +4,8 @@
 
 [main]
 // this is the main namespace
-// you can make other namespaces by using the namespace syntax
-// you can make sub namespaces using the sub namespace syntax
+
+player_name: String = "cool guy 123"
 
     [main:upgrades]
     // this is a sub namespace
